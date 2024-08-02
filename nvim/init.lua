@@ -1,2 +1,3 @@
-  require("config")
-vim.opt.shell = 'cmd.exe'
+require("config")
+vim.opt.shell = "cmd.exe"
+
