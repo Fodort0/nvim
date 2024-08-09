@@ -49,3 +49,6 @@ vim.keymap.set("n", "<leader><leader>", function()
 end)
 vim.keymap.set('v', '<', '<gv')
 vim.keymap.set('v', '>', '>gv')
+
+vim.keymap.set("n", "<leader>f", function() vim.lsp.buf.format({ timeout_ms = 1000 }) end)
+

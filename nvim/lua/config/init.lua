@@ -44,5 +44,10 @@ local status, err = pcall(require, "config.python")
 if not status then
 	vim.notify("Error loading config.python: " .. err, vim.log.levels.ERROR)
 end
+
+local status, err = pcall(require, "config.cpp")
+if not status then
+	vim.notify("Error loading config.cpp: " .. err, vim.log.levels.ERROR)
+end
 require("lazy").setup("plugins", opts)
 
