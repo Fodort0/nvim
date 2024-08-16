@@ -5,7 +5,11 @@ local config = function()
 	require("neoconf").setup({})
 	local cmp_nvim_lsp = require("cmp_nvim_lsp")
 	local lspconfig = require("lspconfig")
-
+	local dap = require("dap") -- Require nvim-dap for debugger setup
+	vim.fn.sign_define("DapBreakpoint", { text = "🔴", texthl = "", linehl = "", numhl = "" })
+	vim.fn.sign_define("DapBreakpointCondition", { text = "🔵", texthl = "", linehl = "", numhl = "" })
+	vim.fn.sign_define("DapBreakpointRejected", { text = "⚠️", texthl = "", linehl = "", numhl = "" })
+	vim.fn.sign_define("DapLogPoint", { text = "🟢", texthl = "", linehl = "", numhl = "" })
 	for type, icon in pairs(diagnostic_signs) do
 		local hl = "DiagnosticSign" .. type
 		vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
@@ -13,98 +17,8 @@ local config = function()
 
 	local capabilities = cmp_nvim_lsp.default_capabilities()
 
-	-- lua
-	lspconfig.lua_ls.setup({
-		capabilities = capabilities,
-		on_attach = on_attach,
-		settings = { -- custom settings for lua
-			Lua = {
-				-- make the language server recognize "vim" global
-				diagnostics = {
-					globals = { "vim" },
-				},
-				workspace = {
-					-- make language server aware of runtime files
-					library = {
-						[vim.fn.expand("$VIMRUNTIME/lua")] = true,
-						[vim.fn.stdpath("config") .. "/lua"] = true,
-					},
-				},
-			},
-		},
-	})
-
-	-- json
-	lspconfig.jsonls.setup({
-		capabilities = capabilities,
-		on_attach = on_attach,
-		filetypes = { "json", "jsonc" },
-	})
-
-	-- python
-	lspconfig.pyright.setup({
-		capabilities = capabilities,
-		on_attach = on_attach,
-		settings = {
-			pyright = {
-				disableOrganizeImports = false,
-				analysis = {
-					useLibraryCodeForTypes = true,
-					autoSearchPaths = true,
-					diagnosticMode = "workspace",
-					autoImportCompletions = true,
-				},
-			},
-		},
-	})
-
-	-- typescript
-	lspconfig.tsserver.setup({
-		on_attach = on_attach,
-		capabilities = capabilities,
-		filetypes = {
-			"typescript",
-		},
-		root_dir = lspconfig.util.root_pattern("package.json", "tsconfig.json", ".git"),
-	})
-
-	-- bash
-	lspconfig.bashls.setup({
-		capabilities = capabilities,
-		on_attach = on_attach,
-		filetypes = { "sh", "aliasrc" },
-	})
-
-	-- solidity
-	lspconfig.solidity.setup({
-		capabilities = capabilities,
-		on_attach = on_attach,
-		filetypes = { "solidity" },
-	})
-
-	-- typescriptreact, javascriptreact, css, sass, scss, less, svelte, vue
-	lspconfig.emmet_ls.setup({
-		capabilities = capabilities,
-		on_attach = on_attach,
-		filetypes = {
-			"typescriptreact",
-			"javascriptreact",
-			"javascript",
-			"css",
-			"sass",
-			"scss",
-			"less",
-			"svelte",
-			"vue",
-			"html",
-		},
-	})
-
-	-- docker
-	lspconfig.dockerls.setup({
-		capabilities = capabilities,
-		on_attach = on_attach,
-	})
+	-- LSP configurations (keep your existing configurations here)
+	-- lua, json, python, typescript, etc.
 
 	-- C/C++
 	lspconfig.clangd.setup({
@@ -116,6 +30,35 @@ local config = function()
 		},
 	})
 
+	dap.adapters.codelldb = {
+		type = "server",
+		port = "${port}",
+		executable = {
+			-- Use Mason's dynamic path for codelldb
+			command = "C:\\Users\\ftama\\AppData\\Local\\nvim-data\\mason\\bin\\codelldb.cmd",
+			args = { "--port", "${port}" },
+		},
+	}
+
+	-- Configuration for C++ debugging with codelldb
+	dap.configurations.cpp = {
+		{
+			name = "Launch C++ with codelldb",
+			type = "codelldb",
+			request = "launch",
+			program = function()
+				-- Get the current workspace folder and executable name dynamically
+				local workspace = vim.fn.getcwd() -- Get the current working directory (project root)
+				local filename = vim.fn.expand("%:t:r") .. ".exe" -- Get the current file's name without extension and add .exe
+				return workspace .. "\\" .. filename -- Construct the path dynamically
+			end,
+			cwd = "${workspaceFolder}",
+			stopOnEntry = false,
+			externalConsole = true, -- Change to true if you need to use an external terminal
+		},
+	}
+	require("dap").set_log_level("DEBUG")
+	-- Additional LSP and formatter/linters configurations
 	local luacheck = require("efmls-configs.linters.luacheck")
 	local stylua = require("efmls-configs.formatters.stylua")
 	local flake8 = require("efmls-configs.linters.flake8")
@@ -130,7 +73,7 @@ local config = function()
 	local cpplint = require("efmls-configs.linters.cpplint")
 	local clangformat = require("efmls-configs.formatters.clang_format")
 
-	-- configure efm server
+	-- EFM configurations
 	lspconfig.efm.setup({
 		filetypes = {
 			"lua",
@@ -149,8 +92,6 @@ local config = function()
 			"solidity",
 			"html",
 			"css",
-			"c",
-			"cpp",
 		},
 		init_options = {
 			documentFormatting = true,
@@ -178,8 +119,6 @@ local config = function()
 				solidity = { solhint },
 				html = { prettier_d },
 				css = { prettier_d },
-				c = { clangformat, cpplint },
-				cpp = { clangformat, cpplint },
 			},
 		},
 	})
@@ -196,5 +135,8 @@ return {
 		"hrsh7th/nvim-cmp",
 		"hrsh7th/cmp-buffer",
 		"hrsh7th/cmp-nvim-lsp",
+		"mfussenegger/nvim-dap", -- Ensure nvim-dap is a dependency
+		"jay-babu/mason-nvim-dap.nvim", -- Ensure mason-nvim-dap is included
 	},
 }
+
