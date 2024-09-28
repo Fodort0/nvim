@@ -16,7 +16,10 @@ local config = function()
 	end
 
 	local capabilities = cmp_nvim_lsp.default_capabilities()
-
+	local prettier = {
+		formatCommand = "prettier --stdin-filepath ${INPUT}",
+		formatStdin = true,
+	}
 	-- LSP configurations (keep your existing configurations here)
 	-- lua, json, python, typescript, etc.
 
@@ -28,6 +31,17 @@ local config = function()
 			"clangd",
 			"--offset-encoding=utf-16",
 		},
+	})
+	-- Add tsserver setup here
+	lspconfig.tsserver.setup({
+		on_attach = function(client, bufnr)
+			-- Disable tsserver's formatting capability to avoid conflicts with efm or prettier
+			client.server_capabilities.documentFormattingProvider = false
+			-- Call your custom on_attach function
+			on_attach(client, bufnr)
+		end,
+		capabilities = capabilities,
+		filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
 	})
 
 	dap.adapters.codelldb = {
@@ -54,7 +68,7 @@ local config = function()
 			end,
 			cwd = "${workspaceFolder}",
 			stopOnEntry = false,
-			externalConsole = true, -- Change to true if you need to use an external terminal
+			externalConsole = true, -- Change to true i you need to use an external terminal
 		},
 	}
 	require("dap").set_log_level("DEBUG")
@@ -105,20 +119,20 @@ local config = function()
 			languages = {
 				lua = { luacheck, stylua },
 				python = { flake8, black },
-				typescript = { eslint, prettier_d },
+				typescript = { prettier },
 				json = { eslint, fixjson },
 				jsonc = { eslint, fixjson },
 				sh = { shellcheck, shfmt },
 				javascript = { eslint, prettier_d },
-				javascriptreact = { eslint, prettier_d },
-				typescriptreact = { eslint, prettier_d },
-				svelte = { eslint, prettier_d },
-				vue = { eslint, prettier_d },
-				markdown = { prettier_d },
-				docker = { hadolint, prettier_d },
+				javascriptreact = { prettier},
+				typescriptreact = { prettier },
+				svelte = { prettier},
+				vue = { prettier},
+				markdown = { prettier},
+				docker = { prettier },
 				solidity = { solhint },
-				html = { prettier_d },
-				css = { prettier_d },
+				html = { prettier },
+				css = { prettier },
 			},
 		},
 	})

@@ -19,7 +19,7 @@ return {
 	"williamboman/mason-lspconfig.nvim",
 	opts = opts,
 	event = "BufReadPre",
-	ddependencies = {
+	dependencies = {
 		"williamboman/mason.nvim",
 		"jay-babu/mason-nvim-dap.nvim", -- Add mason-nvim-dap as a dependency
 		"mfussenegger/nvim-dap", -- Include nvim-dap for debugging
