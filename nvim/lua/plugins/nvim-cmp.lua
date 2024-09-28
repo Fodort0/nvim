@@ -4,10 +4,18 @@ return {
 		local cmp = require("cmp")
 		local luasnip = require("luasnip")
 		local lspkind = require("lspkind")
+		-- Add the tailwindcss-colorizer-cmp formatter
+		local tailwind_formatter = require("tailwindcss-colorizer-cmp").formatter
 
 		require("luasnip/loaders/from_vscode").lazy_load()
 
 		vim.opt.completeopt = "menu,menuone,noselect"
+
+		-- Define the lspkind formatter
+		local lspkind_format = lspkind.cmp_format({
+			maxwidth = 50,
+			ellipsis_char = "...",
+		})
 
 		cmp.setup({
 			snippet = {
@@ -31,19 +39,19 @@ return {
 				{ name = "buffer" }, -- text within current buffer
 				{ name = "path" }, -- file system paths
 			}),
-			-- configure lspkind for vs-code like icons
+			-- Compose the formatters from lspkind and tailwindcss-colorizer-cmp
 			formatting = {
-				format = lspkind.cmp_format({
-					maxwidth = 50,
-					ellipsis_char = "...",
-				}),
+				format = function(entry, item)
+					item = lspkind_format(entry, item)
+					item = tailwind_formatter(entry, item)
+					return item
+				end,
 			},
 		})
 	end,
 	dependencies = {
 		"onsails/lspkind.nvim",
 		{
-
 			"L3MON4D3/LuaSnip",
 			-- follow latest release.
 			version = "2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
@@ -52,3 +60,4 @@ return {
 		},
 	},
 }
+

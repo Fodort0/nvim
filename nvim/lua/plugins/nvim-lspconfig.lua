@@ -22,6 +22,33 @@ local config = function()
 	}
 	-- LSP configurations (keep your existing configurations here)
 	-- lua, json, python, typescript, etc.
+	-- Tailwind CSS setup
+	lspconfig.tailwindcss.setup({
+		on_attach = on_attach,
+		capabilities = capabilities,
+		filetypes = { "html", "css", "javascript", "javascriptreact", "typescript", "typescriptreact", "svelte", "vue" },
+		settings = {
+			tailwindCSS = {
+				classAttributes = { "class", "className", "classList", "ngClass" },
+				lint = {
+					cssConflict = "warning",
+					invalidApply = "error",
+					invalidScreen = "error",
+					invalidVariant = "error",
+					invalidConfigPath = "error",
+				},
+				experimental = {
+					classRegex = {
+						{
+							"tw`([^`]*)",
+							'(?:\\s+|^|;|,|\\()className\\s*=\\s*"([^"]*)"',
+							"(?:\\s+|^|;|,|\\()className\\s*=\\s*'([^']*)'",
+						},
+					},
+				},
+			},
+		},
+	})
 
 	-- C/C++
 	lspconfig.clangd.setup({
