@@ -33,7 +33,7 @@ local config = function()
 		},
 	})
 	-- Add tsserver setup here
-	lspconfig.tsserver.setup({
+	lspconfig.ts_ls.setup({
 		on_attach = function(client, bufnr)
 			-- Disable tsserver's formatting capability to avoid conflicts with efm or prettier
 			client.server_capabilities.documentFormattingProvider = false
@@ -124,11 +124,11 @@ local config = function()
 				jsonc = { eslint, fixjson },
 				sh = { shellcheck, shfmt },
 				javascript = { eslint, prettier_d },
-				javascriptreact = { prettier},
+				javascriptreact = { prettier },
 				typescriptreact = { prettier },
-				svelte = { prettier},
-				vue = { prettier},
-				markdown = { prettier},
+				svelte = { prettier },
+				vue = { prettier },
+				markdown = { prettier },
 				docker = { prettier },
 				solidity = { solhint },
 				html = { prettier },
