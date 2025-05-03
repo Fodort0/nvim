@@ -21,7 +21,7 @@ local opts = {
 		lazy = true,
 	},
 	install = {
-		colorscheme = { "nightfox" },
+		colorscheme = { "catppuccin" },
 	},
 	rtp = {
 		disabled_plugins = {
@@ -49,5 +49,5 @@ local status, err = pcall(require, "config.cpp")
 if not status then
 	vim.notify("Error loading config.cpp: " .. err, vim.log.levels.ERROR)
 end
-require("lazy").setup("plugins", opts)
 
+require("lazy").setup("plugins", opts)
