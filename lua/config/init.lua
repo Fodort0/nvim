@@ -40,9 +40,9 @@ local opts = {
 		notify = true,
 	},
 }
-local status, err = pcall(require, "config.python")
+local status, err = pcall(require, "config.java")
 if not status then
-	vim.notify("Error loading config.python: " .. err, vim.log.levels.ERROR)
+	vim.notify("Error loading config.java: " .. err, vim.log.levels.ERROR)
 end
 
 local status, err = pcall(require, "config.cpp")

@@ -24,6 +24,10 @@ local config = function()
 				theme = "dropdown",
 				previewer = true,
 			},
+			current_buffer_fuzzy_find = {
+				theme = "dropdown",
+				previewer = false, -- no preview since it’s the same file
+			},
 		},
 	})
 end
@@ -34,10 +38,14 @@ return {
 	lazy = false,
 	dependencies = { "nvim-lua/plenary.nvim" },
 	config = config,
-	keys = { keymap.set("n", "<leader>fk", ":Telescope keymaps<CR>"),
-      keymap.set("n", "<leader>fh", ":Telescope help_tags<CR>"),
-      keymap.set("n", "<leader>ff", ":Telescope find_files<CR>"),
-      keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>"),
-      keymap.set("n", "<leader>fb", ":Telescope buffers<CR>"),
-		  },
+	keys = {
+		keymap.set("n", "<leader>fk", ":Telescope keymaps<CR>"),
+		keymap.set("n", "<leader>fh", ":Telescope help_tags<CR>"),
+		keymap.set("n", "<leader>ff", ":Telescope find_files<CR>"),
+		keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>"),
+		keymap.set("n", "<leader>fb", ":Telescope buffers<CR>"),
+
+		-- 🔍 NEW: search in current buffer
+		keymap.set("n", "<leader>/", ":Telescope current_buffer_fuzzy_find<CR>"),
+	},
 }

@@ -1,3 +1,2 @@
 require("config")
-vim.opt.shell = "cmd.exe"
-
+vim.opt.shell = "/bin/bash"
